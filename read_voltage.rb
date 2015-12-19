@@ -4,22 +4,24 @@ require 'pry'
 
 arduino = ArduinoFirmata.connect
 
-num_samples = 10.0
+# 5v ref calibrated from RPINO black board
+v_ref = 5.15
+# These resistor values may need calibrating based on tolerance
+r1 = 100000.0
+r2 = 10000.0
+
+max_input = (v_ref / (r2 / (r1 + r2)))
+
+puts "Maximum input voltage: #{max_input} V"
 
 loop do
-  sum = 0.0
-  sample_count = 0
+  v = (arduino.analog_read(2) * v_ref) / 1024.0
 
-  while sample_count < num_samples
-    sum += arduino.analog_read(2)
-    sample_count += 1
-    sleep(1)
-  end
+  # Convert the voltage divider circuit
+  # v2 = v / (r2 / (r1 + r2))
+  v2 = v * 11.15
 
-  # Calibrated to RPINO Black 5v ref
-  voltage = sum.to_f / (num_samples * 5.15) / 1024.0
+  puts "#{v2} Volts"
 
-  puts "#{voltage * 287.7} Volts"
-
-  sleep(10)
+  sleep(5)
 end
