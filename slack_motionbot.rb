@@ -37,5 +37,5 @@ loop do
     sleep(30)
   end
 
-  arduino.digital_write(lid_pin, false)
+  arduino.digital_write(led_pin, false)
 end
